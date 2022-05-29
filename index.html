@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    table,th,td {
+        border: 1px solid black;
+        margin-left:auto; 
+        margin-right:auto;
+        text-align: center;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    th {
+        background-color: black;
+        color: white;
+    }
+
+    body {
+        background-color: #d5f4e6;
+    }    
+</style>
+<title>
+    Retrieving PSI Data from API
+</title>
+</head>
+<body>
+    <h1>Getting PSI Data from API</h1>
+    <h4>Htet Htet June Han (1901838)</h4>
+
+    <p>
+	<b>Total no of rows: </b><span id="rows"></span><br/>
+    <b>API Info Status: </b><span id="api_Info"></span>
+	</p>
+	<div id="display"></div>
+
+    <script>
+        const api = "https://api.data.gov.sg/v1/environment/psi"
+        const fetchData = async () => {
+            const res = await fetch (api);
+            const data = await res.json();
+            console.log(data)
+
+            //Call the second function
+            displayPsiData(data)
+        }
+
+        //Call the first function
+        fetchData();
+
+        const displayPsiData = (data) => {
+            //Metric, National, Central, West, East, North, South
+            var html = "<h1>PSI Information</h1>";
+            var row_starter = Object.keys(data.items[0].readings)
+            var count = 0;
+            
+            html = html + "<table><tr><th>Metric</th>";
+            html = html + "<th>National</th><th>Central</th><th>West</th><th>East</th>";
+            html = html + "<th>North</th><th>South</th><tr/>";
+
+            Object.entries(data.items[0].readings).forEach((element) => {
+                html = html + "<tr><td>" + element[0] + "</td>";
+                html = html + "<td>" + element[1].national + "</td>";
+                html = html + "<td>" + element[1].central + "</td>";	
+                html = html + "<td>" + element[1].west + "</td>";	
+                html = html + "<td>" + element[1].east + "</td>";
+                html = html + "<td>" + element[1].north + "</td>";
+                html = html + "<td>" + element[1].south + "</td>";
+                count += 1
+            });
+
+            var displayDiv = document.getElementById("display");
+            displayDiv.innerHTML = html;
+            document.getElementById("rows").textContent = count;
+            document.getElementById("api_Info").textContent = data.api_info.status;
+        }
+	
+    </script>
+</body>
+</html>
